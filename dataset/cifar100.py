@@ -35,9 +35,34 @@ def get_data_folder():
 
     return data_folder
 
-
 class CIFAR100Instance(datasets.CIFAR100):
     """CIFAR100Instance Dataset.
+    """
+    def placeholders(self, one):
+        """
+        for placeholder
+        """
+        pass
+    # def __getitem__(self, index):
+    #     if self.train:
+    #         img, target = self.train_data[index], self.train_labels[index]
+    #     else:
+    #         img, target = self.test_data[index], self.test_labels[index]
+
+    #     # doing this so that it is consistent with all other datasets
+    #     # to return a PIL Image
+    #     img = Image.fromarray(img)
+
+    #     if self.transform is not None:
+    #         img = self.transform(img)
+
+    #     if self.target_transform is not None:
+    #         target = self.target_transform(target)
+
+    #     return img, target, index
+
+class CIFAR10Instance(datasets.CIFAR10):
+    """CIFAR10Instance Dataset.
     """
     def __getitem__(self, index):
         if self.train:
@@ -57,13 +82,12 @@ class CIFAR100Instance(datasets.CIFAR100):
 
         return img, target, index
 
-
-def get_cifar100_dataloaders(batch_size=128, num_workers=8, is_instance=False):
+def get_cifar100_dataloaders(batch_size=128, num_workers=8, is_instance=False,data_path:str=None):
     """
     cifar 100
     """
-    data_folder = get_data_folder()
-
+    # data_folder = get_data_folder()
+    data_folder = data_path
     train_transform = transforms.Compose([
         transforms.RandomCrop(32, padding=4),
         transforms.RandomHorizontalFlip(),
@@ -105,6 +129,52 @@ def get_cifar100_dataloaders(batch_size=128, num_workers=8, is_instance=False):
     else:
         return train_loader, test_loader
 
+def get_cifar10_dataloaders(batch_size=128, num_workers=8, is_instance=False,data_path:str=None):
+    """
+    cifar 10
+    """
+    # data_folder = get_data_folder()
+    data_folder = data_path
+    train_transform = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)),
+    ])
+    test_transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)),
+    ])
+
+    if is_instance:
+        train_set = CIFAR100Instance(root=data_folder,
+                                     download=True,
+                                     train=True,
+                                     transform=train_transform)
+        n_data = len(train_set)
+    else:
+        train_set = datasets.CIFAR100(root=data_folder,
+                                      download=True,
+                                      train=True,
+                                      transform=train_transform)
+    train_loader = DataLoader(train_set,
+                              batch_size=batch_size,
+                              shuffle=True,
+                              num_workers=num_workers)
+
+    test_set = datasets.CIFAR100(root=data_folder,
+                                 download=True,
+                                 train=False,
+                                 transform=test_transform)
+    test_loader = DataLoader(test_set,
+                             batch_size=int(batch_size/2),
+                             shuffle=False,
+                             num_workers=int(num_workers/2))
+
+    if is_instance:
+        return train_loader, test_loader, n_data
+    else:
+        return train_loader, test_loader
 
 class CIFAR100InstanceSample(datasets.CIFAR100):
     """
@@ -120,13 +190,14 @@ class CIFAR100InstanceSample(datasets.CIFAR100):
         self.is_sample = is_sample
 
         num_classes = 100
-        if self.train:
-            num_samples = len(self.train_data)
-            label = self.train_labels
-        else:
-            num_samples = len(self.test_data)
-            label = self.test_labels
-
+        # if self.train:
+        #     num_samples = len(self.train_data)
+        #     label = self.train_labels
+        # else:
+        #     num_samples = len(self.test_data)
+        #     label = self.test_labels
+        num_samples = len(self.data)
+        label = self.targets
         self.cls_positive = [[] for i in range(num_classes)]
         for i in range(num_samples):
             self.cls_positive[label[i]].append(i)
@@ -150,11 +221,11 @@ class CIFAR100InstanceSample(datasets.CIFAR100):
         self.cls_negative = np.asarray(self.cls_negative)
 
     def __getitem__(self, index):
-        if self.train:
-            img, target = self.train_data[index], self.train_labels[index]
-        else:
-            img, target = self.test_data[index], self.test_labels[index]
-
+        # if self.train:
+        #     img, target = self.train_data[index], self.train_labels[index]
+        # else:
+        #     img, target = self.test_data[index], self.test_labels[index]
+        img,target=self.data[index],self.targets[index]
         # doing this so that it is consistent with all other datasets
         # to return a PIL Image
         img = Image.fromarray(img)
@@ -184,12 +255,12 @@ class CIFAR100InstanceSample(datasets.CIFAR100):
 
 
 def get_cifar100_dataloaders_sample(batch_size=128, num_workers=8, k=4096, mode='exact',
-                                    is_sample=True, percent=1.0):
+                                    is_sample=True, percent=1.0,data_path:str=None):
     """
     cifar 100
     """
-    data_folder = get_data_folder()
-
+    # data_folder = get_data_folder()
+    data_folder = data_path
     train_transform = transforms.Compose([
         transforms.RandomCrop(32, padding=4),
         transforms.RandomHorizontalFlip(),

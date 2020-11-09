@@ -55,7 +55,7 @@ def parse_option():
 
     # dataset
     parser.add_argument('--dataset', type=str, default='cifar100', choices=['cifar100'], help='dataset')
-
+    parser.add_argument('--datapath', type=str, default='/hdd1/hdd_A/cifar100/', help='dataset path')
     # model
     parser.add_argument('--model_s', type=str, default='resnet8',
                         choices=['resnet8', 'resnet14', 'resnet20', 'resnet32', 'resnet44', 'resnet56', 'resnet110',
@@ -154,11 +154,15 @@ def main():
             train_loader, val_loader, n_data = get_cifar100_dataloaders_sample(batch_size=opt.batch_size,
                                                                                num_workers=opt.num_workers,
                                                                                k=opt.nce_k,
-                                                                               mode=opt.mode)
+                                                                               mode=opt.mode,
+                                                                               data_path= opt.datapath
+                                                                               )
         else:
             train_loader, val_loader, n_data = get_cifar100_dataloaders(batch_size=opt.batch_size,
                                                                         num_workers=opt.num_workers,
-                                                                        is_instance=True)
+                                                                        is_instance=True,
+                                                                        data_path=opt.datapath
+                                                                        )
         n_cls = 100
     else:
         raise NotImplementedError(opt.dataset)
