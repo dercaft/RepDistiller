@@ -26,5 +26,9 @@ Model_list=(
 )
 for model in $Model_list
 do
-    python train_teacher.py --model $model
+    CUDA_VISIBLE_DEVICES=1 python train_teacher.py \
+    --model $model \
+    --datapath /hdd1/hdd_A/cifar100/ \
+    --batch_size 128 \
+    --num_workers 16
 done

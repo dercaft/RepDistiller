@@ -20,7 +20,7 @@ from helper.loops import train_vanilla as train, validate
 
 
 def parse_option():
-    
+
     parser = argparse.ArgumentParser('argument for training')
 
     parser.add_argument('--print_freq', type=int, default=100, help='print frequency')
@@ -44,7 +44,7 @@ def parse_option():
                                  'vgg8', 'vgg11', 'vgg13', 'vgg16', 'vgg19',
                                  'MobileNetV2', 'ShuffleV1', 'ShuffleV2', ])
     parser.add_argument('--dataset', type=str, default='cifar100', choices=['cifar100'], help='dataset')
-
+    parser.add_argument('--datapath', type=str, default="/hdd1/hdd_A/cifar100/")
     parser.add_argument('-t', '--trial', type=int, default=0, help='the experiment id')
 
     opt = parser.parse_args()
@@ -83,7 +83,8 @@ def main():
 
     # dataloader
     if opt.dataset == 'cifar100':
-        train_loader, val_loader = get_cifar100_dataloaders(batch_size=opt.batch_size, num_workers=opt.num_workers)
+        train_loader, val_loader = get_cifar100_dataloaders(batch_size=opt.batch_size, 
+            num_workers=opt.num_workers,data_path=opt.datapath)
         n_cls = 100
     else:
         raise NotImplementedError(opt.dataset)
