@@ -6,7 +6,7 @@ import numpy as np
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 from PIL import Image
-
+PATH="/hdd1/hdd_A/cifar100/"
 """
 mean = {
     'cifar100': (0.5071, 0.4867, 0.4408),
@@ -82,7 +82,7 @@ class CIFAR10Instance(datasets.CIFAR10):
 
         return img, target, index
 
-def get_cifar100_dataloaders(batch_size=128, num_workers=8, is_instance=False,data_path:str=None):
+def get_cifar100_dataloaders(batch_size=128, num_workers=8, is_instance=False,data_path:str=PATH):
     """
     cifar 100
     """
@@ -255,7 +255,7 @@ class CIFAR100InstanceSample(datasets.CIFAR100):
 
 
 def get_cifar100_dataloaders_sample(batch_size=128, num_workers=8, k=4096, mode='exact',
-                                    is_sample=True, percent=1.0,data_path:str=None):
+                                    is_sample=True, percent=1.0,data_path:str=PATH):
     """
     cifar 100
     """

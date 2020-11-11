@@ -20,9 +20,7 @@ from helper.loops import train_vanilla as train, validate
 
 
 def parse_option():
-
-    hostname = socket.gethostname()
-
+    
     parser = argparse.ArgumentParser('argument for training')
 
     parser.add_argument('--print_freq', type=int, default=100, help='print frequency')
@@ -56,12 +54,8 @@ def parse_option():
         opt.learning_rate = 0.01
 
     # set the path according to the environment
-    if hostname.startswith('visiongpu'):
-        opt.model_path = '/path/to/my/model'
-        opt.tb_path = '/path/to/my/tensorboard'
-    else:
-        opt.model_path = './save/models'
-        opt.tb_path = './save/tensorboard'
+    opt.model_path = './save/models'
+    opt.tb_path = './save/tensorboard'
 
     iterations = opt.lr_decay_epochs.split(',')
     opt.lr_decay_epochs = list([])
