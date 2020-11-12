@@ -141,17 +141,17 @@ def main():
             print('saving the best model!')
             torch.save(state, save_file)
 
-        # regular saving
-        if epoch % opt.save_freq == 0:
-            print('==> Saving...')
-            state = {
-                'epoch': epoch,
-                'model': model.state_dict(),
-                'accuracy': test_acc,
-                'optimizer': optimizer.state_dict(),
-            }
-            save_file = os.path.join(opt.save_folder, 'ckpt_epoch_{epoch}.pth'.format(epoch=epoch))
-            torch.save(state, save_file)
+        # # regular saving
+        # if epoch % opt.save_freq == 0:
+        #     print('==> Saving...')
+        #     state = {
+        #         'epoch': epoch,
+        #         'model': model.state_dict(),
+        #         'accuracy': test_acc,
+        #         'optimizer': optimizer.state_dict(),
+        #     }
+        #     save_file = os.path.join(opt.save_folder, 'ckpt_epoch_{epoch}.pth'.format(epoch=epoch))
+        #     torch.save(state, save_file)
 
     # This best accuracy is only for printing purpose.
     # The results reported in the paper/README is from the last epoch.
